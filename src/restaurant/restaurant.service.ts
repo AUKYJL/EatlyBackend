@@ -42,17 +42,94 @@ export class RestaurantService {
       adress: createRestaurantDto.adress,
       desc: createRestaurantDto.desc,
       tag: createRestaurantDto.tag,
-      //   comments: [],
-      //   dishes: [],
-      //   likedUsers: [],
+      urlToImg: createRestaurantDto.urlToImg,
+      time: createRestaurantDto.time,
       rating: 0,
     });
     return restaurant;
   }
 
-  async findAll() {
-    const restaurants = await this.restaurantRepository.find();
+  async findAllOwn(userId: number) {
+    const restaurants = await this.restaurantRepository.find({
+      where: {
+        owner: { id: userId },
+      },
+      relations: { bookmarkedUsers: true, owner: true },
+    });
     return restaurants;
+  }
+
+  async findAllOwnWithPagination(page: number, limit: number, userId: number) {
+    const restaurants = await this.restaurantRepository.find({
+      where: {
+        owner: { id: userId },
+      },
+      relations: { bookmarkedUsers: true, owner: true },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+    return restaurants;
+  }
+
+  async findAllBookmarkedRestaurants(userId: number) {
+    const restaurants = await this.restaurantRepository.find({
+      where: {
+        bookmarkedUsers: { id: userId },
+      },
+      relations: { bookmarkedUsers: true, owner: true },
+    });
+    return restaurants;
+  }
+
+  async findAllBookmarkedRestaurantsWithPagination(
+    page: number,
+    limit: number,
+    userId: number,
+  ) {
+    const restaurants = await this.restaurantRepository.find({
+      where: {
+        bookmarkedUsers: { id: userId },
+      },
+      relations: { bookmarkedUsers: true, owner: true },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+    return restaurants;
+  }
+
+  async changeBookMark(userId: number, restaurantId: number) {
+    let changed = false;
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+      relations: { bookmarkedUsers: true, owner: true },
+    });
+    if (!restaurant) throw new NotFoundException('This restaurant not found');
+
+    if (!restaurant.bookmarkedUsers) restaurant.bookmarkedUsers = [];
+
+    for (let i = 0; i < restaurant.bookmarkedUsers.length; i++) {
+      const user = restaurant.bookmarkedUsers[i];
+      if (userId == user.id) {
+        restaurant.bookmarkedUsers.splice(i, 1);
+        changed = true;
+        break;
+      }
+    }
+    if (!changed) {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+      });
+      restaurant.bookmarkedUsers.push(user);
+    }
+    return await this.restaurantRepository.save(restaurant);
+  }
+
+  async findAll() {
+    const restaurants = await this.restaurantRepository.find({
+      relations: { bookmarkedUsers: true, owner: true },
+    });
+    const res = this.mapRestaurantsToWithBookmarkedUsersId(restaurants);
+    return res;
   }
 
   async findOne(id: number) {
@@ -62,6 +139,9 @@ export class RestaurantService {
       },
       relations: {
         dishes: true,
+        bookmarkedUsers: true,
+        // comments: true,
+        owner: true,
       },
     });
     return restaurant;
@@ -85,6 +165,32 @@ export class RestaurantService {
     });
     if (!restaurant) throw new NotFoundException('Restaurant not found');
     return await this.restaurantRepository.update(id, updateRestaurantDto);
+  }
+
+  private mapRestaurantsToWithBookmarkedUsersId(restaurants: Restaurant[]) {
+    return restaurants.map((r) => ({
+      owner: r.owner,
+      id: r.id,
+      title: r.title,
+      desc: r.desc,
+      tag: r.tag,
+      rating: r.rating,
+      time: r.time,
+      urlToImg: r.urlToImg,
+      adress: r.adress,
+      bookmarkedUsers: r.bookmarkedUsers.map((u) => ({
+        id: u.id,
+      })),
+    }));
+  }
+  async findAllWithPagination(page: number, limit: number) {
+    const restaurants = await this.restaurantRepository.find({
+      take: limit,
+      skip: (page - 1) * limit,
+      relations: { bookmarkedUsers: true, owner: true },
+    });
+    const res = this.mapRestaurantsToWithBookmarkedUsersId(restaurants);
+    return res;
   }
 
   async remove(id: number, userId: number) {

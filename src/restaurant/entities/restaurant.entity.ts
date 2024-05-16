@@ -28,6 +28,12 @@ export class Restaurant {
   @Column()
   rating: number;
 
+  @Column()
+  time: string;
+
+  @Column()
+  urlToImg: string;
+
   @ManyToOne(() => User, (user) => user.ownRestaurants)
   owner: User;
 
@@ -37,9 +43,13 @@ export class Restaurant {
   @Column()
   adress: string;
 
-  @ManyToMany(() => User, (user) => user.bookmarkedRestaurants)
-  likedUsers: User[];
+  @ManyToMany(() => User, (user) => user.bookmarkedRestaurants, {
+    onDelete: 'CASCADE',
+  })
+  bookmarkedUsers: User[];
 
-  @OneToMany(() => Comment, (comment) => comment.restaurant)
+  @OneToMany(() => Comment, (comment) => comment.restaurant, {
+    onDelete: 'CASCADE',
+  })
   comments: Comment[];
 }

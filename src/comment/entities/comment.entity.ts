@@ -4,8 +4,8 @@ import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -26,9 +26,11 @@ export class Comment {
   @Column()
   rating: number;
 
-  @OneToMany(() => Dish, (dish) => dish.comments)
+  @ManyToOne(() => Dish, (dish) => dish.comments)
+  @JoinTable()
   dish: Dish;
 
-  @OneToMany(() => Restaurant, (restaurant) => restaurant.comments)
+  @ManyToOne(() => Restaurant, (restaurant) => restaurant.comments)
+  @JoinTable()
   restaurant: Restaurant;
 }

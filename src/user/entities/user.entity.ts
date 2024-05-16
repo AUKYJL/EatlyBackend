@@ -45,7 +45,7 @@ export class User {
   @JoinTable()
   foodsInCart: Dish[];
 
-  @ManyToMany(() => Restaurant, (restaurant) => restaurant.likedUsers, {
+  @ManyToMany(() => Restaurant, (restaurant) => restaurant.bookmarkedUsers, {
     onDelete: 'CASCADE',
   })
   @JoinTable()

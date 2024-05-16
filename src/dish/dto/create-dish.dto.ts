@@ -1,9 +1,8 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { DishCategories, DishGroups, DishTags } from '../types/dish.interface';
 
 export class CreateDishDto {
   @IsNotEmpty()
-  @IsNumber()
   restaurantId: number;
 
   @IsString()

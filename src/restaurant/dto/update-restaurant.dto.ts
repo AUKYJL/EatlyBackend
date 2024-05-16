@@ -10,4 +10,8 @@ export class UpdateRestaurantDto extends PartialType(CreateRestaurantDto) {
   tag?: RestaurantTags;
 
   adress?: string;
+
+  urlToImg: string;
+
+  time: string;
 }

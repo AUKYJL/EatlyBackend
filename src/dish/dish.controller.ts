@@ -27,24 +27,45 @@ export class DishController {
   create(@Body() createDishDto: CreateDishDto, @Req() req) {
     return this.dishService.create(createDishDto, +req.user.id);
   }
+  @Get('pagination')
+  findAllWithPagination(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    return this.dishService.findAllWithPagination(+page, +limit);
+  }
+  @Get()
+  findAll() {
+    return this.dishService.findAll();
+  }
 
   @Get('restaurant/:id')
-  findAll(@Param('id') restaurantId: string) {
-    return this.dishService.findAll(+restaurantId);
+  findAllRestaurantDishes(@Param('id') restaurantId: string) {
+    return this.dishService.findAllRestaurantDishes(+restaurantId);
+  }
+  @Patch('change-liked/:id')
+  @UseGuards(JwtAuthGuard)
+  changeLiked(@Param('id') id: string, @Req() req) {
+    return this.dishService.changeLiked(+id, +req.user.id);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.dishService.findOne(+id);
   }
+
   //?page=2&limit=3
   @Get('restaurant/:id/pagination')
-  findAllWithPagination(
+  findAllRestaurantDishesWithPagination(
     @Param('id') restaurantId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
   ) {
-    return this.dishService.findAllWithPagination(+restaurantId, +page, +limit);
+    return this.dishService.findAllRestaurantDishesWithPagination(
+      +restaurantId,
+      +page,
+      +limit,
+    );
   }
 
   @Get('restaurant/:id/popular')

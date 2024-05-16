@@ -20,7 +20,7 @@ export class Dish {
   @Column()
   title: string;
 
-  @Column()
+  @Column('decimal', { scale: 2 })
   price: number;
 
   @Column()
@@ -44,18 +44,28 @@ export class Dish {
   @Column()
   dishCategory: DishCategories;
 
-  @ManyToOne(() => Restaurant, (restaurant) => restaurant.dishes)
+  @ManyToOne(() => Restaurant, (restaurant) => restaurant.dishes, {
+    onDelete: 'CASCADE',
+  })
   restaurant: Restaurant;
 
-  @ManyToMany(() => User, (user) => user.likedFoods)
+  @ManyToMany(() => User, (user) => user.likedFoods, {
+    onDelete: 'CASCADE',
+  })
   usersLikedFood: User[];
 
-  @ManyToMany(() => User, (user) => user.foodsInCart)
+  @ManyToMany(() => User, (user) => user.foodsInCart, {
+    onDelete: 'CASCADE',
+  })
   userAddedInCart: User[];
 
-  @ManyToMany(() => Purchase, (purchase) => purchase.dish)
+  @ManyToMany(() => Purchase, (purchase) => purchase.dish, {
+    onDelete: 'CASCADE',
+  })
   purchase: Purchase[];
 
-  @OneToMany(() => Comment, (comment) => comment.dish)
+  @OneToMany(() => Comment, (comment) => comment.dish, {
+    onDelete: 'CASCADE',
+  })
   comments: Comment[];
 }
