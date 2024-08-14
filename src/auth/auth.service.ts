@@ -24,16 +24,20 @@ export class AuthService {
   }
 
   async login(user: IUser) {
-    const { id, email, name } = user;
+    const { id, email, name,urlToImg, phone } = user;
     return {
       id,
       email,
       name,
+			urlToImg,
+			phone,
       //кладет в токен инфу
       token: this.jwtService.sign({
-        id: id,
-        email: email,
-        name: name,
+        id,
+      	email,
+        name,
+				urlToImg,
+				phone
       }),
     };
   }

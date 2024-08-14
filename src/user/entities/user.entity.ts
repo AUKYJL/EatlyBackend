@@ -27,6 +27,9 @@ export class User {
   @Column()
   phone: string;
 
+	@Column({ default:''})
+  urlToImg: string;
+
   @Column()
   password: string;
   @OneToMany(() => Restaurant, (restaurant) => restaurant.owner, {
@@ -62,12 +65,14 @@ export class User {
   })
   cartProduct: CartProduct[];
 
-  @OneToMany(() => Article, (article) => article.author)
+  @OneToMany(() => Article, (article) => article.author, {
+    onDelete: 'CASCADE',
+  })
   articles: Article[];
 
-  @OneToMany(() => Comment, (comment) => comment.author)
+  @OneToMany(() => Comment, (comment) => comment.author, {
+    onDelete: 'CASCADE',
+  })
   comments: Comment[];
 
-  //   @OneToMany(() => Rate, (rate) => rate.comment)
-  //   userCommentsRates: Rate[];
 }
