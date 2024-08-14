@@ -1,3 +1,4 @@
+import { CartProduct } from 'src/cart-product/entities/cart-product.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { Purchase } from 'src/purchase/entities/purchase.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
@@ -63,6 +64,11 @@ export class Dish {
     onDelete: 'CASCADE',
   })
   purchase: Purchase[];
+
+  @ManyToMany(() => CartProduct, (cartProduct) => cartProduct.dish, {
+    onDelete: 'CASCADE',
+  })
+  cartProduct: CartProduct[];
 
   @OneToMany(() => Comment, (comment) => comment.dish, {
     onDelete: 'CASCADE',

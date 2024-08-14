@@ -5,7 +5,6 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -21,6 +20,6 @@ export class Purchase {
   @CreateDateColumn()
   Date: Date;
 
-  @ManyToOne(() => User, (user) => user.purchases)
+  @ManyToMany(() => User, (user) => user.purchases)
   customer: User;
 }

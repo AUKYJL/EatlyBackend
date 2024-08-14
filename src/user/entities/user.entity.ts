@@ -1,4 +1,5 @@
 import { Article } from 'src/article/entities/article.entity';
+import { CartProduct } from 'src/cart-product/entities/cart-product.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { Dish } from 'src/dish/entities/dish.entity';
 import { Purchase } from 'src/purchase/entities/purchase.entity';
@@ -26,6 +27,9 @@ export class User {
   @Column()
   phone: string;
 
+	@Column({ default:''})
+  urlToImg: string;
+
   @Column()
   password: string;
   @OneToMany(() => Restaurant, (restaurant) => restaurant.owner, {
@@ -51,12 +55,24 @@ export class User {
   @JoinTable()
   bookmarkedRestaurants: Restaurant[];
 
-  @OneToMany(() => Purchase, (purchase) => purchase.customer)
+  @ManyToMany(() => Purchase, (purchase) => purchase.customer, {
+    onDelete: 'CASCADE',
+  })
   purchases: Purchase[];
 
-  @OneToMany(() => Article, (article) => article.author)
+  @ManyToMany(() => CartProduct, (cartProduct) => cartProduct.customer, {
+    onDelete: 'CASCADE',
+  })
+  cartProduct: CartProduct[];
+
+  @OneToMany(() => Article, (article) => article.author, {
+    onDelete: 'CASCADE',
+  })
   articles: Article[];
 
-  @OneToMany(() => Comment, (comment) => comment.author)
+  @OneToMany(() => Comment, (comment) => comment.author, {
+    onDelete: 'CASCADE',
+  })
   comments: Comment[];
+
 }

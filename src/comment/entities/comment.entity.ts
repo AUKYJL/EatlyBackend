@@ -7,7 +7,9 @@ import {
   JoinTable,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { commentType } from '../types/comment.types';
 
 @Entity()
 export class Comment {
@@ -15,7 +17,7 @@ export class Comment {
   id: number;
 
   @ManyToOne(() => User, (user) => user.comments)
-  author: User[];
+  author: User;
 
   @Column()
   title: string;
@@ -24,7 +26,17 @@ export class Comment {
   message: string;
 
   @Column()
-  rating: number;
+  type: commentType;
+
+  @Column({ default: 1 })
+  rate: number;
+
+  //   @OneToMany(() => Rate, (rate) => rate.comment)
+  //   @JoinTable()
+  //   userRates: Rate[];
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @ManyToOne(() => Dish, (dish) => dish.comments)
   @JoinTable()
